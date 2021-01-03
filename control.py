@@ -37,9 +37,10 @@ def main():
     while(True):
         v = load.measure_voltage()
         i = load.measure_current()
-        print("Voltage: " + str(v))
-        print("Current: " + str(i))
+        # print("Voltage: " + str(v))
+        # print("Current: " + str(i))
         log = "{}, {}, {}\n".format(v, i, t)
+        print(log)
         f.write(log)
         f.flush()
 
