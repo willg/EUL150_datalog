@@ -1,35 +1,55 @@
 import serial
+import ar488
+import eul_150
+import time
 
-def init_gpib():
-    print("configuring GPIB controller")
-    print("")
-    ser = serial.Serial('/dev/ttyACM0', 115200, timeout=0.1)
-    ser.write(b'++ver\n')
-    data = ser.read(100)
-    print(data)
-    ser.write(b'++auto 2\n')
+def setup(dev):
+    print("connecting AR488 on " + dev)
+    ser = serial.Serial(dev, 115200, timeout=0.1)
 
-    ser.write(b'++auto \n')
-    data = ser.read(100)
-    print("auto: " + str(data))
+    gpib = ar488.ar488(ser)
+    print("Version: " + gpib.get_version() )
+    gpib.auto_mode_2()
 
-    return ser
+    return gpib
 
 def main():
-    ser = init_gpib()
-    ser.write(b"LOAD:?\n")
-    data = ser.read(100)
-    print(data)
+    term_voltage = 20
+    discharge_current = 2.0
+    gpib = setup("/dev/ttyACM0")
+    load = eul_150.eul_150(gpib)
+    print("Model: " + load.model_query())
 
-    ser.write(b"MEAS:V?\n")
-    data = ser.read(100)
-    print("voltage: " + str(data))
+    load.range_set_0()
+    time.sleep(0.1)
+    load.current_set(discharge_current)
+    time.sleep(0.1)
+    load.load_on()
+    time.sleep(0.1)
+    f = open("data.txt", "w")
+    f.write("termination voltage: {} V\n".format(term_voltage))
+    f.write("discharge current: {} A\n".format(discharge_current))
+    f.write("time, voltage, current\n")
+    f.flush()
 
-    ser.write(b"MEAS:C?\n")
-    data = ser.read(100)
-    print("current: " + str(data))
+    t = 0
 
-    ser.close()
+    while(True):
+        v = load.measure_voltage()
+        i = load.measure_current()
+        print("Voltage: " + str(v))
+        print("Current: " + str(i))
+        log = "{}, {}, {}\n".format(v, i, t)
+        f.write(log)
+        f.flush()
+
+        if v <= term_voltage:
+            break
+        time.sleep(1)
+        t += 1
+
+    load.load_off()
+    gpib.close()
 
 if __name__ == "__main__":
     main()
