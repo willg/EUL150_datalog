@@ -14,8 +14,8 @@ def setup(dev):
     return gpib
 
 def main():
-    term_voltage = 20
-    discharge_current = 2.0
+    term_voltage = 10
+    discharge_current = 0.5
     gpib = setup("/dev/ttyACM0")
     load = eul_150.eul_150(gpib)
     print("Model: " + load.model_query())
