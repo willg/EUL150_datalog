@@ -39,7 +39,7 @@ def main(filename, serial_port, term_voltage, discharge_current):
         # print("Voltage: " + str(v))
         # print("Current: " + str(i))
         log = "{}, {}, {}\n".format(v, i, t)
-        print(log)
+        print(log.strip())
         f.write(log)
         f.flush()
 
