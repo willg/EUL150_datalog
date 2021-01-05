@@ -29,6 +29,8 @@ def main(filename, serial_port, term_voltage, discharge_current):
     f.write("termination voltage: {} V\n".format(term_voltage))
     f.write("discharge current: {} A\n".format(discharge_current))
     f.write("voltage, current, time\n")
+    notes = input("Test Notes:")
+    f.write("Notes: " + notes)
     f.flush()
 
     t = 0
