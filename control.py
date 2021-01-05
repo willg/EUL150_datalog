@@ -2,6 +2,7 @@ import serial
 import ar488
 import eul_150
 import time
+import argparse
 
 def setup(dev):
     print("connecting AR488 on " + dev)
@@ -13,10 +14,8 @@ def setup(dev):
 
     return gpib
 
-def main():
-    term_voltage = 10
-    discharge_current = 0.5
-    gpib = setup("/dev/ttyACM0")
+def main(filename, serial_port, term_voltage, discharge_current):
+    gpib = setup(serial_port)
     load = eul_150.eul_150(gpib)
     print("Model: " + load.model_query())
 
@@ -26,7 +25,7 @@ def main():
     time.sleep(0.1)
     load.load_on()
     time.sleep(0.1)
-    f = open("data.txt", "w")
+    f = open(filename, "w")
     f.write("termination voltage: {} V\n".format(term_voltage))
     f.write("discharge current: {} A\n".format(discharge_current))
     f.write("time, voltage, current\n")
@@ -53,4 +52,15 @@ def main():
     gpib.close()
 
 if __name__ == "__main__":
-    main()
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('filename')
+    parser.add_argument('serial_port')
+    parser.add_argument('term_voltage')
+    parser.add_argument('discharge_current')
+
+    args = parser.parse_args()
+    main(args.filename,
+            args.serial_port,
+            float(args.term_voltage),
+            float(args.discharge_current))
