@@ -50,6 +50,7 @@ def main(filename, serial_port, term_voltage, discharge_current):
 
     load.load_off()
     gpib.close()
+    print("Data written to: " + filename)
 
 if __name__ == "__main__":
 
