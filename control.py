@@ -28,7 +28,7 @@ def main(filename, serial_port, term_voltage, discharge_current):
     f = open(filename, "w")
     f.write("termination voltage: {} V\n".format(term_voltage))
     f.write("discharge current: {} A\n".format(discharge_current))
-    f.write("voltage, current, time\n")
+    f.write("voltage, current, time, amp-hour, watt-hour\n")
     notes = input("Test Notes:")
     f.write("Notes: " + notes + "\n")
     f.flush()
@@ -36,12 +36,22 @@ def main(filename, serial_port, term_voltage, discharge_current):
     t = 0
     t_step = 1 # seconds
 
+    amp_seconds_total = 0
+    watt_seconds_total = 0
+
     while(True):
         v = load.measure_voltage()
         i = load.measure_current()
+        amp_seconds = t_step * i
+        watt_seconds = amp_seconds * v
+
+        amp_seconds_total += amp_seconds
+        watt_seconds_total += watt_seconds
+        AHr = amp_seconds_total / 3600
+        WHr = watt_seconds_total / 3600
         # print("Voltage: " + str(v))
         # print("Current: " + str(i))
-        log = "{}, {}, {}\n".format(v, i, t)
+        log = "{}, {}, {}, {}, {}\n".format(v, i, t, AHr, WHr)
         print(log.strip())
         f.write(log)
         f.flush()
