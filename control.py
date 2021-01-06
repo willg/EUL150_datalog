@@ -34,6 +34,7 @@ def main(filename, serial_port, term_voltage, discharge_current):
     f.flush()
 
     t = 0
+    t_step = 1 # seconds
 
     while(True):
         v = load.measure_voltage()
@@ -47,8 +48,8 @@ def main(filename, serial_port, term_voltage, discharge_current):
 
         if v <= term_voltage:
             break
-        time.sleep(1)
-        t += 1
+        time.sleep(t_step)
+        t += t_step
 
     load.load_off()
     gpib.close()
