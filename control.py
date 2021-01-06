@@ -49,8 +49,6 @@ def main(filename, serial_port, term_voltage, discharge_current):
         watt_seconds_total += watt_seconds
         AHr = amp_seconds_total / 3600
         WHr = watt_seconds_total / 3600
-        # print("Voltage: " + str(v))
-        # print("Current: " + str(i))
         log = "{}, {}, {}, {}, {}\n".format(v, i, t, AHr, WHr)
         print(log.strip())
         f.write(log)
